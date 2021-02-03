@@ -226,7 +226,8 @@ Login
   Select From List By Value  id=slPosition_mainProcurementCategory  ${tender_data.data.mainProcurementCategory}
 
   ${procurementMethodDetails}=  Get From Dictionary  ${tenderData.data}  procurementMethodDetails
-  Input Text  id=e_quick_value  ${accelerator}
+  Run Keyword If  not '${procurement_method_type}' in ['reporting', 'negotiation', 'negotiation_quick']  
+  ...  Input Text  id=e_quick_value  ${accelerator}
 
   Input text  id=ew_Org_0_CP_name  ${tender_data.data.procuringEntity.contactPoint.name}
   Input text  id=ew_Org_0_CP_email  ${tender_data.data.procuringEntity.contactPoint.email}
@@ -721,7 +722,7 @@ Login
   click element    xpath=//div[@id="dgAward"]//button[@data-atid="btnSend"]
   Sleep  1
   Wait Until Element Contains  id=page_shown  Y  10
-  uub.Завантажити документ рішення кваліфікаційної комісії тендеру  ${filepath}  0
+  uub.Завантажити документ рішення кваліфікаційної комісії тендеру  ${filepath}  1
   Sleep  1
   Wait Until Element Contains  id=page_shown  Y  10
   Click Element  xpath=(//div[@id="pnAwardList"]//button[contains(@id, 'bt_award_public')])[last()]

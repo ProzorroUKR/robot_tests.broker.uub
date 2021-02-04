@@ -226,8 +226,7 @@ Login
   Select From List By Value  id=slPosition_mainProcurementCategory  ${tender_data.data.mainProcurementCategory}
 
   ${procurementMethodDetails}=  Get From Dictionary  ${tenderData.data}  procurementMethodDetails
-  Run Keyword If  not '${procurement_method_type}' in ['reporting', 'negotiation', 'negotiation_quick']  
-  ...  Input Text  id=e_quick_value  ${accelerator}
+  Input Text  id=e_quick_value  ${accelerator}
 
   Input text  id=ew_Org_0_CP_name  ${tender_data.data.procuringEntity.contactPoint.name}
   Input text  id=ew_Org_0_CP_email  ${tender_data.data.procuringEntity.contactPoint.email}
@@ -779,7 +778,7 @@ Login
     ...  ELSE IF    '${fieldname}' == 'qualifications[1].status'                           Get Text  xpath=//div[contains(@id, 'pn_ql_Record')][2]//span[@data-atid='status']
     ...  ELSE IF    '${fieldname}' == 'agreements[0].status'                               Get Text  xpath=//div[@data-block="agreement"]//span[@data-atid='status']
     ...  ELSE IF    '${fieldname}' == 'agreements[0].agreementID'                          Get Text  xpath=//div[@data-block="agreement"]//span[@data-atid='agreementID']
-    ...  ELSE IF    '${fieldname}' == 'cause'                                              Get Text  id=tPosition_items_cause
+    ...  ELSE IF    '${fieldname}' == 'cause'                                              Get Text  id=tPosition_cause
     ...  ELSE IF    '${fieldname}' == 'causeDescription'                                   Отримати інформацію з елементу за шляхом //*[@data-atid='causeDescription']
     ...  ELSE IF    '${fieldname}' == 'agreementDuration'                                  Get Text  id=tePosition_agreementDuration
     ...  ELSE IF    '${fieldname}' == 'documents[0].title'                                 Get Text  xpath=(//div[@id='pn_trd_doc_place']//a[contains(@class, 'doc_title')])[1]
@@ -1310,6 +1309,8 @@ Login
 
 Завантажити документацію до вимоги
   [Arguments]  ${username}  ${tender_uaid}  ${complaintID}  ${document}
+  uub.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
+  Перейти до сторінки скарг
   Click Element  xpath=//div[@data-block-id='${complaintID}']//button[contains(@id, "btn_documents_add")]
   Choose File  xpath=//form[@id='upload_form']//input[@name='file']  ${document}
   Click Element  //div[@id="diagFileUpload"]//button[@data-atid="btClose"]
@@ -1473,7 +1474,8 @@ Login
 Редагувати угоду
   [Arguments]    ${username}   ${tender_uaid}   ${index}    ${fieldname}    ${fieldvalue}
 ##debug    uub.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
-
+  Очікування закінчення оскарження договору
+  
   ${app_value}=  Run Keyword If  '${fieldname}' in ['value.amountNet', 'value.amount']  convert to string  ${fieldvalue}
   ...  ELSE  Set Variable  ${fieldvalue}
 
@@ -1790,19 +1792,24 @@ Login
   Click Element  xpath=//div[@id="pnList"]//div[@data-block="cancellation"][last()]//button[contains(@id, 'btActivate_')]
   sleep  2
   Wait Until Element Contains  id=page_shown  Y  10
-
-
+  
+  ${cancellation_data}=  Get text  xpath=//div[@id="pnList"]//div[@data-block="cancellation"][last()]//*[@data-atid="content"]
+  ${cancellation_data}=  json_load  ${cancellation_data}
+  ${cancellation_data}=  munch_dict  arg=${cancellation_data}
+  Set To Dictionary  ${USERS.users['${tender_owner}']}  cancellation_data=${cancellation_data}
+  [return]  ${cancellation_data}
+  
 Скасувати закупівлю
   [Arguments]  ${username}  ${tender_uaid}  ${cancellation_reason}  ${cancellation_reasonType}  ${doc_path}  ${description}
   Wait Until Page Contains Element  id=btnСancel 
   Click Element  id=btnСancel
-  Створити скаування  ${username}  ${tender_uaid}  ${cancellation_reason}  ${cancellation_reasonType}  ${doc_path}  ${description} 
+  Run Keyword And Return  Створити скаування  ${username}  ${tender_uaid}  ${cancellation_reason}  ${cancellation_reasonType}  ${doc_path}  ${description} 
   
 Скасувати лот
   [Arguments]  ${username}  ${tender_uaid}  ${lot_id}  ${cancellation_reason}  ${cancellation_reasonType}  ${doc_path}  ${description}
   Wait Until Page Contains Element  xpath=(//div[@data-block-id='${lot_id}']//button[contains(@id, 'btn_lot_cancel_')]) 
   Click Element  xpath=(//div[@data-block-id='${lot_id}']//button[contains(@id, 'btn_lot_cancel_')])
-  Створити скаування  ${username}  ${tender_uaid}  ${cancellation_reason}  ${cancellation_reasonType}  ${doc_path}  ${description} 
+  Run Keyword And Return  Створити скаування  ${username}  ${tender_uaid}  ${cancellation_reason}  ${cancellation_reasonType}  ${doc_path}  ${description} 
 
 ############################### Сервіс ###################################################
 

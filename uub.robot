@@ -956,7 +956,7 @@ Login
 
 Подати цінову пропозицію
   [Arguments]  ${username}  ${tender_uaid}  ${bid}  ${lots_ids}=None  ${features_ids}=None
-  uub.Подати цінову пропозицію в статусі draft  ${username}  ${bid}  ${lots_ids}  ${features_ids}
+  uub.Подати цінову пропозицію в статусі draft  ${username}  ${tender_uaid}  ${bid}  ${lots_ids}  ${features_ids}
   Wait Until Element Is Visible  xpath=(//*[@id='btn_public'])
   Click Element  id=btn_public
   ${bid_draft_view}=  Set variable  ${False}
@@ -1365,14 +1365,18 @@ Login
   ...  AND  Click Element  id=button-send-complaint-answer
   sleep  1
   Wait Until Element Contains  id=page_shown  Y  10
+  
+Змінити статус скарги на скасування
+  [Arguments]  ${username}  ${tender_uaid}  ${complaintID}  ${qualification_index}  ${confirmation_data}
+  uub.Змінити статус скарги  ${username}  ${tender_uaid}  ${complaintID}  ${confirmation_data}
 
 Змінити статус скарги на визначення пре-кваліфікації учасника
   [Arguments]  ${username}  ${tender_uaid}  ${complaintID}  ${qualification_index}  ${confirmation_data}
-  Змінити статус скарги  ${username}  ${tender_uaid}  ${complaintID}  ${confirmation_data}
+  uub.Змінити статус скарги  ${username}  ${tender_uaid}  ${complaintID}  ${confirmation_data}
   
 Змінити статус скарги на визначення переможця
   [Arguments]  ${username}  ${tender_uaid}  ${complaintID}  ${award_index}  ${confirmation_data}
-  Змінити статус скарги  ${username}  ${tender_uaid}  ${complaintID}  ${confirmation_data}
+  uub.Змінити статус скарги  ${username}  ${tender_uaid}  ${complaintID}  ${confirmation_data}
   
 ################################## Пре-кваліфікація ################################
 

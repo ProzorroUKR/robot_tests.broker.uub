@@ -28,6 +28,7 @@ ${locator.tenderPeriod.endDate}  id=tdtpPosition_tenderPeriod_endDate_Date
   Login  ${username}
   Set Global Variable  ${first_search}  ${TRUE}
   Set Global Variable  ${need_reg_criteria}  ${FALSE}
+  Set Global Variable  ${need_save_agreement}  ${TRUE}
   
 Підготувати дані для оголошення тендера
   [Arguments]  ${username}  ${tender_data}  ${role_name}
@@ -315,7 +316,8 @@ Login
   
   ${endDate}=  Get Text  id=tPosition_complaintPeriod_endDate
   ${complaintPeriod}=  Create Dictionary  endDate=${endDate}
-  Set To Dictionary  ${USERS.users['${tender_owner}'].tender_data.data}  complaintPeriod=${complaintPeriod}  
+  ${complaintPeriod}=  munch_dict  arg=${complaintPeriod}
+  Set Global Variable  ${complaintPeriod}  
 
   [return]  ${TENDER}
 
@@ -330,12 +332,15 @@ Login
   Set Global Variable  ${tender_uaid}  ${ARTIFACT.tender_uaid}
   uub.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
   Click Element  id=btn_FA_draft
- 
   Wait Until Element Is Visible  id=btnSend
   Click Element  id=btnSend
   Sleep  1
   Wait Until Element Contains  id=ValidateTips  Збереження виконано  30
   Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Is Visible  id=btnPublic
+  
+  Input Text  id=e_quick_value  ${accelerator}
+  
   Input text  id=ew_Org_0_CP_url  ${tender_data.data.procuringEntity.contactPoint.url}
 
   ${tender_id}=  Get Text  id=tPosition_tenderID
@@ -527,15 +532,14 @@ Login
   ...  ELSE  Set variable  //div[@id="pn_itemsContent"]
 
   Click Element  xpath=${item_list}//button[@data-atid="btn_items_add"]
-  log to console  ${item_list}
   
   Input Text  id=ew_item_${index}_description  ${item.description}
   Run Keyword If  '${procurement_method_type}' in ['aboveThresholdEU', 'aboveThresholdUA.defense', 'simple.defense', 'competitiveDialogueEU', 'esco', 'closeFrameworkAgreementUA']
   ...  input text  id=ew_item_${index}_description_en  ${item.description_en}
   input text  id=ew_item_${index}_classification_id  ${item.classification.id}
   Sleep  1
-  Wait Until Page Contains Element  xpath=(//ul[contains(@class, 'ui-autocomplete') and not(contains(@style,'display: none'))]//li//a)
-  Click Element  xpath=(//ul[contains(@class, 'ui-autocomplete') and not(contains(@style,'display: none'))]//li//a)
+  Wait Until Page Contains Element  xpath=//ul[contains(@class, 'ui-autocomplete') and not(contains(@style,'display: none'))]//li//a
+  Click Element  xpath=//ul[contains(@class, 'ui-autocomplete') and not(contains(@style,'display: none'))]//li//a
   Run Keyword If  '${procurement_method_type}' != 'esco'  Додати не esco параметри предмету  ${item}  ${index} 
 
   ${is_esco}=  Evaluate  '${procurement_method_type}' in ['esco']
@@ -609,19 +613,19 @@ Login
   Run Keyword If  '${feature.featureOf}' == 'lot'  Click Element  xpath=${feature_object}//button[contains(@id, 'btn_lot_features_add')]
   Run Keyword If  '${feature.featureOf}' == 'tenderer'  Click Element  id=btn_features_add
 
-  Input text  xpath=${feature_object}//div[@data-block="feature"][last()]//*[@data-atid="title"]   ${feature.title}
-  Input text  xpath=${feature_object}//div[@data-block="feature"][last()]//*[@data-atid="description"]   ${feature.description}
+  Input text  xpath=(${feature_object}//div[@data-block="feature"])[last()]//*[@data-atid="title"]   ${feature.title}
+  Input text  xpath=(${feature_object}//div[@data-block="feature"])[last()]//*[@data-atid="description"]   ${feature.description}
 
     ${number_of_enum}=  Get Length  ${feature.enum}
     set global variable  ${number_of_enum}
     :FOR  ${index}  IN RANGE  ${number_of_enum}
-  \  Click Element  xpath=${feature_object}//div[@data-block="feature"][last()]//button[@data-atid="btn_add_feature_enum"]
     \  Додати вагу нецінового критерія  ${feature_object}  ${feature.enum[${index}]}
 
 Додати вагу нецінового критерія
     [Arguments]   ${feature_object}  ${enum}
   ${value}=  Evaluate  ${enum.value} * 100
   ${str}=  Convert To String  ${value}
+  Click Element  xpath=(${feature_object}//div[@data-block="feature"])[last()]//button[@data-atid="btn_add_feature_enum"]
   Input text  xpath=(${feature_object}//div[@data-block="feature_enum"])[last()]//*[@data-atid="value"]   ${str}
   Input text  xpath=(${feature_object}//div[@data-block="feature_enum"])[last()]//*[@data-atid="title"]   ${enum.title}
 
@@ -694,7 +698,12 @@ Login
   log  ${tender_data}
   log  ${USERS.users['${tender_owner}'].tender_data}
 
-  Run Keyword If  '${username}' == '${tender_owner}'  Set To Dictionary  ${USERS.users['${tender_owner}'].tender_data}  data=${tender_data}
+  Run Keyword If  '${username}' == '${tender_owner}'  Run keywords
+  ...  Set To Dictionary  ${USERS.users['${tender_owner}'].tender_data}  data=${tender_data}
+  ...  AND  Set To Dictionary  ${USERS.users['${tender_owner}'].tender_data.data}  complaintPeriod=${complaintPeriod}  
+
+  log  ${USERS.users['${tender_owner}'].tender_data}
+
   Run Keyword If  '${username}' != 'uub_Viewer'  Set To Dictionary  ${USERS.users['${username}']}  tender_data=${USERS.users['${tender_owner}'].tender_data}
   
 #  Set To Dictionary  ${USERS.users['${username}']}  tender_data=${USERS.users['${tender_owner}'].tender_data}
@@ -772,7 +781,7 @@ Login
     ...  ELSE IF    '${fieldname}' == 'tenderID'                                           Get Text   id=tPosition_tenderID
     ...  ELSE IF    '${fieldname}' == 'mainProcurementCategory'                            Get Text   id=tPosition_mainProcurementCategory
     ...  ELSE IF    '${fieldname}' == 'procurementMethodType'                              get text   id=tPosition_procurementMethodType
-    ...  ELSE IF    '${fieldname}' == 'maxAwardsCount'                                     Отримати інформацію з елементу за шляхом //*[@id='maxAwardsCount']   id=tePosition_maxAwardsCount
+    ...  ELSE IF    '${fieldname}' == 'maxAwardsCount'                                     Отримати інформацію з елементу за шляхом //*[@data-atid='maxAwardsCount']
     ...  ELSE IF    '${fieldname}' == 'value.valueAddedTaxIncluded'                        is_checked  cbPosition_value_valueAddedTaxIncluded
     ...  ELSE IF    '${fieldname}' == 'value.currency'                                     Get Text   id=tPosition_value_currency
     ...  ELSE IF    '${fieldname}' == 'value.amount'                                       Get Text   id=tPosition_value_amount
@@ -801,7 +810,7 @@ Login
     ...  ELSE IF    '${fieldname}' == 'agreements[0].agreementID'                          Get Text  xpath=//div[@data-block="agreement"]//span[@data-atid='agreementID']
     ...  ELSE IF    '${fieldname}' == 'cause'                                              Get Text  id=tPosition_cause
     ...  ELSE IF    '${fieldname}' == 'causeDescription'                                   Отримати інформацію з елементу за шляхом //*[@data-atid='causeDescription']
-    ...  ELSE IF    '${fieldname}' == 'agreementDuration'                                  Get Text  id=tePosition_agreementDuration
+    ...  ELSE IF    '${fieldname}' == 'agreementDuration'                                  Get Text  id=tPosition_agreementDuration
     ...  ELSE IF    '${fieldname}' == 'documents[0].title'                                 Get Text  xpath=(//div[@id='pn_trd_doc_place']//a[contains(@class, 'doc_title')])[1]
     ...  ELSE IF    '${fieldname}' == 'budget.amount'                                      Отримати інформацію про ${fieldname}
     ...  ELSE IF    '${fieldname}' == 'NBUdiscountRate'                                    Get Text  id=tPosition_NBUdiscountRate
@@ -948,20 +957,23 @@ Login
   ...  Wait Until Element Is Visible  id=dtpPosition_tenderPeriod_endDate_Date
   ...  AND  input text  id=dtpPosition_tenderPeriod_endDate_Date  ${str}
   ...  AND  input text  id=ePosition_tenderPeriod_endDate_Time  ${str_HM}
-  Run Keyword If  '${fieldname}' == 'tenderPeriod.endDate'  Set To Dictionary  ${USERS.users['${tender_owner}'].initial_data.data.tenderPeriod}  endDate=${fieldvalue}  
+  Run Keyword If  '${fieldname}' == 'tenderPeriod.endDate' and not '${procurement_method_type}' == 'closeFrameworkAgreementSelectionUA'  Set To Dictionary  ${USERS.users['${tender_owner}'].initial_data.data.tenderPeriod}  endDate=${fieldvalue}  
   Run Keyword If  '${fieldname}' == 'maxAwardsCount'  input text  id=ePosition_maxAwardsCount  ${str}
   Run Keyword If  '${fieldname}' == 'description'  input text  id=ePosition_description  ${str}
   Run Keyword If  '${fieldname}' == 'title'  input text  id=ePosition_title  ${str}
   
   log  ${USERS.users['${tender_owner}'].initial_data}
   Click Element  id=btnPublic
+  Run Keyword If  '${fieldname}' == 'maxAwardsCount'  sleep  5
+  sleep  5
   Wait Until Element Contains  id=page_shown  Y  30
   Run Keyword If  '${fieldname}' == 'tenderPeriod.endDate'  Оновити данні користувачів прозорро
   
 Оновити данні користувачів прозорро
   [Arguments]  
-  FOR  ${username}  IN  ${viewer}  ${provider}  ${provider1}  ${provider2}
-  \  Можливість знайти тендер по ідентифікатору для користувача ${username}
+  ${un}=  Set variable  ${viewer}
+  :FOR  ${un}  IN  ${viewer}  ${provider}  ${provider1}  ${provider2}
+  \  Можливість знайти тендер по ідентифікатору для користувача ${un}
   
 Змінити лот
   [Arguments]  ${username}   ${tender_uaid}   ${lot_id}   ${fieldname}    ${fieldvalue}
@@ -980,6 +992,7 @@ Login
   Run Keyword If  '${fieldname}' == 'description'  input text  xpath=(//div[@data-block-id='${lot_id}'])//textarea[contains(@id, 'description')]  ${str}
 
   Click Element  id=btnPublic
+  sleep  5
   Wait Until Element Contains  id=page_shown  Y  30
 
 Отримати інформацію про tenderPeriod.startDate
@@ -1008,7 +1021,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   [Arguments]  ${username}  ${tender_uaid}  ${bid}  ${lots_ids}=None  ${features_ids}=None
   uub.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
   Click Element  id=btnBid
-  Wait Until Element Is Visible  xpath=(//*[@id='bid_load_status']) 
+  Wait Until Element Is Visible  xpath=(//*[@id='bid_load_status'])
   
   ${bid_draft_view}=  Set variable  ${True}
   Set Global Variable  ${bid_draft_view}
@@ -1020,10 +1033,10 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   ${hasFeatures}=  Run Keyword And Return Status  Dictionary Should Contain Key  ${USERS.users['${tender_owner}'].initial_data.data}  features
   ${parameters}=  Run Keyword If  ${hasFeatures}  Get From Dictionary  ${bid.data}  parameters
 
-  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Click Element  id=lcbBid_selfQualified
+  Run Keyword If  not '${procurement_method_type}' in ['belowThreshold', 'closeFrameworkAgreementSelectionUA']  Click Element  id=lcbBid_selfQualified
   Run Keyword If  '${procurement_method_type}' in ['aboveThresholdUA.defense', 'simple.defense']  Click Element  id=lcbBid_selfEligible
 
-  Run Keyword If    '${procurement_method_type}' == 'esco'  Додати пропозицію лоту esco  ${bid}  ${lots_ids}
+  Run Keyword If  '${procurement_method_type}' == 'esco'  Додати пропозицію лоту esco  ${bid}  ${lots_ids}
   ...  ELSE IF  not ${islot}  Додати ставку  ${bid}
   ...  ELSE  Додати пропозицію лоту загально  ${bid}  ${lots_ids}
 
@@ -1083,18 +1096,18 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
 
     ${val}=  Evaluate  ${lots.value.yearlyPaymentsPercentage} * 100
     ${str}=  convert to string   ${val}
-    input text  id=eBid_yearlyPaymentsPercentage_100${relatedLot}  ${str}
+    input text  xpath=//input[contains(@id, 'eBid_yearlyPaymentsPercentage')]  ${str}
     ${str}=  convert to string   ${lots.value.contractDuration.years}
-    input text  id=eBid_contractDuration_years${relatedLot}  ${str}
+    input text  xpath=//input[contains(@id, 'eBid_contractDuration_years')]  ${str}
     ${str}=  convert to string   ${lots.value.contractDuration.days}
-    input text  id=eBid_contractDuration_days${relatedLot}  ${str}
+    input text  xpath=//input[contains(@id, 'eBid_contractDuration_days')]  ${str}
 
     ${annual}=   Get From Dictionary       ${lots.value}    annualCostsReduction
     ${number_of_annual}=  Get Length       ${annual}
     set global variable    ${number_of_annual}
     :FOR  ${index}  IN RANGE  ${number_of_annual}
     \  ${str}=  convert to string  ${annual[${index}]}
-    \  input text  id=acr_${index}_${relatedLot}  ${str}
+    \  input text  xpath=//input[contains(@id, 'acr_${index}_')]  ${str}
   
 Додати ставку 
   [Arguments]   ${bid}
@@ -1120,14 +1133,14 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   [Arguments]  ${username}  ${tender_uaid}  ${fieldname}   ${value}
 ##  uub.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
 ##  Click Element  id=btnShowBid
-##  Wait Until Element Is Visible  xpath=(//*[@id='bid_load_status']) 
+  Wait Until Element Is Visible  id=btn_public 
 
   ${str}=  Convert To String  ${value}
   Run Keyword if  "${fieldname}" == "value.amount"  Input Text  xpath=//input[@data-atid="value.amount"]  ${str}
   Run Keyword if  "${fieldname}" == "lotValues[0].value.amount"  Input Text  xpath=//input[@data-atid="value.amount"]  ${str}
 
   Click Element  id=btn_public
-  Wait Until Element Is Not Visible  id=waiting_published
+//  Wait Until Element Is Not Visible  id=waiting_published
   Sleep  1
   Wait Until Element Is Visible  xpath=(//*[@id='bid_load_status']) 
 
@@ -1137,7 +1150,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   ...  uub.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
   ...  AND  Click Element  id=btnShowBid
   ...  AND  Wait Until Element Is Visible  xpath=(//*[@id='bid_load_status']) 
-  
+  Sleep  1
   Click Element  id=btn_documents_add
   
 #  ${doc_type}=  Run Keyword If  '${doc_type}' == 'None'  Set variable  commercialProposal
@@ -1184,9 +1197,10 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   Run Keyword If  not ${isBidForm}  Run keywords
   ...  uub.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
   ...  AND  Click Element  id=btnShowBid
-  ...  AND  Wait Until Element Is Visible  xpath=(//*[@id='bid_load_status'])
   
-  ${return_value}=  Run Keyword If  'value.amount' in '${fieldname}'  Отримати інформацію з елементу за шляхом //input[@data-atid="value.amount"]
+  Wait Until Element Is Visible  xpath=(//*[@id='bid_load_status'])
+  
+  ${return_value}=  Run Keyword If  'value.amount' in '${fieldname}'  Отримати інформацію з елементу за шляхом //*[@data-atid="value.amount"]
   ...  ELSE IF  '${fieldname}' == 'status'  Get Text  id=tBid_status
 
   ${return_value}=  Run Keyword If  'value.amount' in '${fieldname}'  convert to number  ${return_value.replace(" ", "").replace(',', '.')}
@@ -1421,8 +1435,8 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
 Підтвердити кваліфікацію
   [Arguments]   ${username}  ${tender_uaid}  ${index}
   ${negative}=  Evaluate  ${index} < ${0}
-  ${index}=  Run Keyword If  non ${negative}  Set variable  ${index}
-  ...  ELSE  Evaluate  -{index}
+  ${index}=  Run Keyword If  not ${negative}  Set variable  ${index}
+  ...  ELSE  Evaluate  - ${index}
   
   ${index}=  inc  ${index}
   click element  xpath=//div[@data-block="ql"][${index}]//label[@data-atid="eligible"]
@@ -1464,7 +1478,8 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   [Arguments]   ${username}   ${tender_uaid}
   Wait Until Element Contains  id=page_shown  Y  10
   click element  id=btn_pre_qualification_stand_still
-  sleep  120
+  ${suite_name}=  Convert To Lowercase  ${SUITE_NAME}
+  Run Keyword If  not 'complaints' in '${suite_name}' and not '${procurement_method_type}' == 'closeFrameworkAgreementUA'  sleep  120
   Reload Page
   Wait Until Element Contains  id=page_shown  Y  10
 
@@ -1647,7 +1662,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   Click Element  xpath=(//div[@id="pn_agreement_List"]//button[contains(@id, 'bt_agreement_public')])
 
 Пошук угоди по ідентифікатору
-  [Arguments]  ${username}  ${AGREEMENT_UAID}  ${save_key}=tender_data
+  [Arguments]  ${username}  ${AGREEMENT_UAID}  ${save_key}=agreement_data
   go to  ${BROKERS['uub'].tenders_page}
   Wait Until Page Contains Element  id=btFilterAgreement
   Sleep  1
@@ -1662,18 +1677,34 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   Sleep  1
   Click Element  xpath=//a[contains(@id, "title")]
   Wait Until Element Contains  id=page_shown  Y  10
+  
+  Run Keyword If  ${need_save_agreement}  Перший пошук угоди  ${username}
+
+Перший пошук угоди
+  [Arguments]  ${username}
+  Set Variable  ${need_save_agreement}  ${False}
+
+  ${data}=  Get text  id=tender_data
+
+  ${data}=  json_load  ${data}
+  ${data}=  munch_dict  arg=${data}
+  ${data}=  Create Dictionary  data=${data}
+  ${agreement_data}=  Create Dictionary  agreement_data=${data}
+  
+  Set To Dictionary  ${USERS.users['${username}']}  agreement_data=${agreement_data}
  
 Отримати інформацію із угоди
   [Arguments]  ${username}  ${agreement_uaid}  ${field_name}
   ${return_value}=  Run Keyword If  'changes' in '${fieldname}'  Отримати інформацію по id про ${fieldname}
-  ...  Else  Get text  xpath=//div[@id="pn_agreement_List"]//*[@data-atid="${fieldname}" and not(contains(@style,'display: none'))]
+  ...  ELSE  Get text  xpath=//div[@id="pn_agreement_List"]//*[@data-atid="${fieldname}" and not(contains(@style,'display: none'))]
   [Return]  ${return_value}
 
 Отримати інформацію по id про changes[${index}].${fieldname}
+  Wait Until Element Contains  id=page_shown  Y  10
   ${index}=  inc  ${index}
 
-  ${return_value}=  Run Keyword If  'modifications' in '${fieldname}'  Отримати інформацію по id про [${index}] ${fieldname}  
-  ...  Else  Get text  xpath=//div[@data-block="agreement_change"][${index}]//*[@data-atid="${fieldname}" and not(contains(@style,'display: none'))]
+  ${return_value}=  Run Keyword If  'modifications' in '${fieldname}'  Отримати інформацію по id про ${index} ${fieldname}  
+  ...  ELSE  Get text  xpath=//div[@data-block="agreement_change"][${index}]//*[@data-atid="${fieldname}" and not(contains(@style,'display: none'))]
   
   ${return_value}=   Run Keyword If  'addend' in '${fieldname}'  convert to number  ${return_value.replace(" ", "").replace(',', '.')}
   ...  ELSE IF  'factor' in '${fieldname}'  convert to number  ${return_value.replace(" ", "").replace(',', '.')}
@@ -1681,6 +1712,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   [Return]  ${return_value}
 
 Отримати інформацію по id про ${index_change} modifications[${index}].${fieldname}
+  Wait Until Element Contains  id=page_shown  Y  10
   ${index}=  inc  ${index}
   ${return_value}=  Get text  xpath=//div[@data-block="agreement_change"][${index_change}]//div[@data-block="modification"][${index}]//*[@data-atid="${fieldname}" and not(contains(@style,'display: none'))]
   [Return]  ${return_value}
@@ -1861,7 +1893,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   [Arguments]  ${username}  ${tender_uaid}  ${cancellations_index}
   uub.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
   Перейти до сторінки скаувань
-  Wait Until Element Is Visible    
+  Wait Until Element Is Visible   xpath=(//button[contains(@id, 'btUnsuccessful')])
   Click Element  xpath=(//button[contains(@id, 'btUnsuccessful')])
   
 ############################### Сервіс ###################################################

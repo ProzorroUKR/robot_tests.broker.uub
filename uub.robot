@@ -964,8 +964,7 @@ Login
   
   log  ${USERS.users['${tender_owner}'].initial_data}
   Click Element  id=btnPublic
-  Run Keyword If  '${fieldname}' == 'maxAwardsCount'  sleep  5
-  sleep  5
+  sleep  10
   Wait Until Element Contains  id=page_shown  Y  30
   Run Keyword If  '${fieldname}' == 'tenderPeriod.endDate'  Оновити данні користувачів прозорро
   
@@ -1428,6 +1427,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   
 Змінити статус скарги на визначення переможця
   [Arguments]  ${username}  ${tender_uaid}  ${complaintID}  ${award_index}  ${confirmation_data}
+  Run Keyword If  '${confirmation_data.data.status}' == 'resolved'  uub.Скасувати кваліфікацію  ${username}  ${tender_uaid}  ${award_index}
   uub.Змінити статус скарги  ${username}  ${tender_uaid}  ${complaintID}  ${confirmation_data}
   
 ################################## Пре-кваліфікація ################################
@@ -1517,6 +1517,23 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   ${index}=  inc  ${index}
   Wait Until Element Contains  id=page_shown  Y  10
   Wait Until Page Contains Element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'bt_award_public')]
+  click element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'bt_award_public')]
+  sleep  3
+  Wait Until Element Contains  id=page_shown  Y  10
+
+Дискваліфікувати постачальника
+  [Arguments]  ${username}  ${tender_uaid}  ${index}
+  ${index}=  inc  ${index}
+  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Page Contains Element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'bt_award_public')]
+
+  click element  xpath=//div[@data-block="award"][${index}]//label[contains(@for, "decision_reject")]
+  Wait Until Element Is Visible  xpath=//div[@data-block="award"][${index}]//button[contains(@id,"bt_award_set_title_")]
+  click element  xpath=//div[@data-block="award"][${index}]//button[contains(@id,"bt_award_set_title_")]
+  
+  Select From List By Index  id=sl_theme  0
+  click element  id=bt_award_set_title_id
+  sleep  1
   click element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'bt_award_public')]
   sleep  3
   Wait Until Element Contains  id=page_shown  Y  10

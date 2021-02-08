@@ -1469,13 +1469,6 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   sleep  10
   Wait Until Element Contains  id=page_shown  Y  10
 
-Скасувати кваліфікацію
-  [Arguments]   ${username}   ${tender_uaid}    ${index}
-  ${index}=  inc  ${index}
-  click element  xpath=//div[@data-block="ql"][${index}]//button[contains(@id, 'bt_ql_Cancel')]
-  sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
-
 Затвердити остаточне рішення кваліфікації
   [Arguments]   ${username}   ${tender_uaid}
   Wait Until Element Contains  id=page_shown  Y  10
@@ -1489,6 +1482,14 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   ${qualificationPeriod}=  Create Dictionary
   ...  endDate=${endDate}
   Set To Dictionary  ${USERS.users['${tender_owner}'].tender_data}  qualificationPeriod=${qualificationPeriod}
+
+Скасувати пре-кваліфікацію
+  [Arguments]   ${username}   ${tender_uaid}    ${index}
+  ${index}=  inc  ${index}
+  click element  xpath=//div[@data-block="йд"][${index}]//button[contains(@id, 'bt_ql_Cancel')]
+  sleep  10
+  Wait Until Element Contains  id=page_shown  Y  10
+
 
 ################################## Кваліфікація ################################
 
@@ -1546,6 +1547,13 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   Wait Until Element Contains  id=page_shown  Y  10
   Wait Until Page Contains Element  id=btn_qualification_stand_still
   click element  id=btn_qualification_stand_still
+  sleep  10
+  Wait Until Element Contains  id=page_shown  Y  10
+
+Скасувати кваліфікацію
+  [Arguments]   ${username}   ${tender_uaid}    ${index}
+  ${index}=  inc  ${index}
+  click element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'bt_award_Cancel')]
   sleep  10
   Wait Until Element Contains  id=page_shown  Y  10
 	
@@ -1708,9 +1716,8 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   ${data}=  json_load  ${data}
   ${data}=  munch_dict  arg=${data}
   ${data}=  Create Dictionary  data=${data}
-  ${agreement_data}=  Create Dictionary  agreement_data=${data}
   
-  Set To Dictionary  ${USERS.users['${username}']}  agreement_data=${agreement_data}
+  Set To Dictionary  ${USERS.users['${username}']}  agreement_data=${data}
  
 Отримати інформацію із угоди
   [Arguments]  ${username}  ${agreement_uaid}  ${field_name}

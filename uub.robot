@@ -1483,14 +1483,6 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   ...  endDate=${endDate}
   Set To Dictionary  ${USERS.users['${tender_owner}'].tender_data}  qualificationPeriod=${qualificationPeriod}
 
-Скасувати пре-кваліфікацію
-  [Arguments]   ${username}   ${tender_uaid}    ${index}
-  ${index}=  inc  ${index}
-  click element  xpath=//div[@data-block="йд"][${index}]//button[contains(@id, 'bt_ql_Cancel')]
-  sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
-
-
 ################################## Кваліфікація ################################
 
 Скасування рішення кваліфікаційної комісії

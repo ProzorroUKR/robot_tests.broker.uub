@@ -74,14 +74,14 @@ Login
   Sleep  1
   
   Click Element  xpath=(//a[contains(text(), '${tender_uaid}')])
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   
 Створити план
   [Arguments]  ${username}  ${plan_data}
   go to  ${BROKERS['uub'].plans_page}
   Wait Until Page Contains Element  id=btAddRecord  20
   Click Element  id=btAddRecord
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   ${procurement_method_type}=  Get From Dictionary  ${plan_data.data.tender}  procurementMethodType
   Set Global Variable  ${procurement_method_type}
   Wait Until Page Contains Element  id=btnSend  20
@@ -220,9 +220,9 @@ Login
 
   Wait Until Page Contains Element  id=btAddTender  20
   Click Element  id=btAddTender
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Select From List By Value  id=slPosition_procurementMethodType  ${tender_data.data.procurementMethodType}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Input text  id=ePosition_planID  ${plan_uaid}
   Select From List By Value  id=slPosition_mainProcurementCategory  ${tender_data.data.mainProcurementCategory}
 
@@ -336,7 +336,7 @@ Login
   Click Element  id=btnSend
   Sleep  1
   Wait Until Element Contains  id=ValidateTips  Збереження виконано  30
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Wait Until Element Is Visible  id=btnPublic
   
   Input Text  id=e_quick_value  ${accelerator}
@@ -575,31 +575,31 @@ Login
 Додати неціновий показник на тендер
   [Arguments]  ${username}  ${tender_uaid}  ${feature}
 #  uub.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Додати неціновий критерій  ${feature}
   Append To List  ${USERS.users['${username}'].tender_data.data['features']}  ${feature}
   log  ${USERS.users['${username}'].tender_data.data}
   Click Element  id=btnPublic  
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Додати неціновий показник на предмет
   [Arguments]  ${username}  ${tender_uaid}  ${feature}  ${item_id}
 #  uub.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Додати неціновий критерій  ${feature}
   Click Element  id=btnPublic  
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Додати неціновий показник на лот
   [Arguments]  ${username}  ${tender_uaid}  ${feature}  ${lot_id}
 #  uub.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Додати неціновий критерій  ${feature}
   Click Element  id=btnPublic  
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   
 Додати неціновий критерій
   [Arguments]   ${feature}  
@@ -632,11 +632,11 @@ Login
 Видалити неціновий показник
   [Arguments]  ${username}  ${tender_uaid}  ${feature_id}
 #  uub.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Click Element  xpath=//div[@data-block-id='${feature_id}']//button[@data-atid="btn_delete_feature"]
   Click Element  id=btnPublic  
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   
 Встановити tenderPeriod endDate
   [Arguments]    ${username}    ${tender_data}
@@ -653,7 +653,7 @@ Login
   Click Element  id=btn_documents_add
   Choose File  xpath=(//form[@id='upload_form']//input[@name='file'])  ${filepath}
   Reload Page
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Пошук тендера по ідентифікатору
   [Arguments]  ${username}  ${tender_uaid}  ${save_key}=tender_data
@@ -674,7 +674,7 @@ Login
   Wait Until Page Contains Element  xpath=//a[contains(@id, "title")]
   Sleep  1
   Click Element  xpath=//a[contains(@id, "title")]
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   
   Run Keyword If  ${first_search}  Run Keyword And Ignore Error  Перший пошук  ${username}
   
@@ -725,7 +725,7 @@ Login
   [Arguments]   ${username}   ${tender_uaid}   ${supplier_data}   ${filepath}
 ##debug  uub.Пошук тендера по ідентифікатору  ${username}  ${tender_uaid}
   
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Click Element  id=btn_Award_add
   Wait Until Element Is Visible  id=value_amount
   ${str}=  Convert To String  ${supplier_data.data.value.amount}
@@ -749,13 +749,13 @@ Login
 
   click element    xpath=//div[@id="dgAward"]//button[@data-atid="btnSend"]
   Sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   uub.Завантажити документ рішення кваліфікаційної комісії тендеру  ${filepath}  1
   Sleep  1
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Click Element  xpath=(//div[@id="pnAwardList"]//button[contains(@id, 'bt_award_public')])[last()]
   Sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 ##debug  Run Keyword If  '${procurement_method_type}' == 'reporting'  Click Element  xpath=(//div[@id="pnAwardList"]//button[contains(@id, 'bt_contract_save')])[last()]
   
@@ -766,7 +766,7 @@ Login
 Отримати інформацію із тендера
   [Arguments]   ${username}   ${tender_uaid}   ${fieldname}
   ${not_present_ref}=  Run Keyword And Return Status  Element Should Not Be Visible  id=position_ref
-  Run Keyword if  ${not_present_ref}  Wait Until Element Contains  id=page_shown  Y  10
+  Run Keyword if  ${not_present_ref}  Wait Until Element Contains  id=page_shown  Y  30
   
   ${isPositionForm}=  Run Keyword And Return Status  Location Should Contain  /tender/
   ${status_check}=  Evaluate  '${fieldname}' == 'status' or '${fieldname}' == 'qualificationPeriod.endDate'
@@ -774,7 +774,7 @@ Login
   
   Run Keyword If  ${status_check}  Run keywords
   ...  Дочекатись синхронізації з майданчиком  ${username}
-  ...  AND  Wait Until Element Contains  id=page_shown  Y  10
+  ...  AND  Wait Until Element Contains  id=page_shown  Y  30
   
     ${return_value}=  Run Keyword If  '${fieldname}' == 'title'  Get Text   id=tePosition_title
     ...  ELSE IF    '${fieldname}' == 'description'                                        Get Text   id=tePosition_description
@@ -920,15 +920,15 @@ Login
 
 Видалити донора
   [Arguments]  ${username}  ${tender_uaid}  ${funders_index}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   click element  id=lcb_funder_has
   Click Element  id=btnPublic
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Додати донора
   [Arguments]  ${username}  ${tender_uaid}  ${funders_data}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   log  ${USERS.users['${username}'].tender_data}
   click element  id=lcb_funder_has
   Sleep  1
@@ -936,7 +936,7 @@ Login
   click element  id=bt_funder
   Click Element  id=btnPublic
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Отримати тест із поля і показати на сторінці
   [Arguments]  ${fieldname}
@@ -966,7 +966,8 @@ Login
   
   log  ${USERS.users['${tender_owner}'].initial_data}
   Click Element  id=btnPublic
-  sleep  10
+  Wait Until Page Does Not Contain Element  Очікування
+  Sleep  5
   Wait Until Element Contains  id=page_shown  Y  30
   Run Keyword If  '${fieldname}' == 'tenderPeriod.endDate'  Оновити данні користувачів прозорро
   
@@ -993,7 +994,8 @@ Login
   Run Keyword If  '${fieldname}' == 'description'  input text  xpath=(//div[@data-block-id='${lot_id}'])//textarea[contains(@id, 'description')]  ${str}
 
   Click Element  id=btnPublic
-  sleep  10
+  Wait Until Page Does Not Contain Element  Очікування
+  Sleep  5
   Wait Until Element Contains  id=page_shown  Y  30
 
 Отримати інформацію про tenderPeriod.startDate
@@ -1211,13 +1213,13 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
 Отримати інформацію про bids
   [Arguments]  @{ARGUMENTS}
   Reload Page
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Click Element  id=bids_ref
 
 Отримати посилання на аукціон для глядача
   [Arguments]  ${username}  ${tender_uaid}   ${lot_id}=${None}
   Reload Page
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   ${result} =  Run Keyword If  ${lot_id} == ${None}  Get Text  id=aPosition_auctionUrl
   ...  ELSE   Get text  xpath=//div[@data-block="lot"])//*[@data-atid="auctionUrl" and not(contains(@style,'display: none'))]
   [return]  ${result}
@@ -1225,7 +1227,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
 Отримати посилання на аукціон для учасника
   [Arguments]    ${username}  ${tender_uaid}   ${lot_id}=${None}
   Reload Page
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   ${result} =  Run Keyword If  ${lot_id} == ${None}  Get Text  id=aPosition_auctionUrl
   ...  ELSE   Get text  xpath=//div[@data-block="lot"])//*[@data-atid="auctionUrl" and not(contains(@style,'display: none'))]
   [return]  ${result}
@@ -1281,18 +1283,18 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   Wait Until Page Contains Element  id=complaints_ref 
   Click Element  id=complaints_ref
   Sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   
 Створити чернетку скарги
   [Arguments]  ${username}  ${tender_uaid}  ${complaint_data}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
   Wait Until Element Is Visible  xpath=//button[contains(@id, 'btSave_')]
   Input text  xpath=//div[@id="pnList"]//div[@data-block="complaint"][last()]//textarea[contains(@id, '_title')]  ${complaint_data.data.title}
   Input text  xpath=//div[@id="pnList"]//div[@data-block="complaint"][last()]//textarea[contains(@id, '_description')]  ${complaint_data.data.description}
   Click Element  xpath=//div[@id="pnList"]//div[@data-block="complaint"][last()]//button[contains(@id, 'btSave_')]
   sleep  1
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
   Wait Until Element Is Visible  xpath=//div[@id="pnList"]//div[@data-block="complaint"][last()]//button[contains(@id, "btn_documents_add")]
 
@@ -1306,7 +1308,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   Wait Until Element Is Visible  xpath=//div[@id="pnList"]//div[@data-block="complaint"][last()]//button[contains(@id, 'bt_cml_send_')]
   Click Element  xpath=//div[@id="pnList"]//div[@data-block="complaint"][last()]//button[contains(@id, 'bt_cml_send_')]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
   ${complaint}=  Get text  xpath=//div[@id="pnList"]//div[@data-block="complaint"][last()]//*[@data-atid="content"]
   ${complaint}=  json_load  ${complaint}
@@ -1417,7 +1419,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   ...  AND  Input text  id=e_complaint_tendererAction  ${confirmation_data.data.tendererAction}
   ...  AND  Click Element  id=button-send-complaint-answer
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   
 Змінити статус скарги на скасування
   [Arguments]  ${username}  ${tender_uaid}  ${complaintID}  ${qualification_index}  ${confirmation_data}
@@ -1445,7 +1447,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   click element  xpath=//div[@data-block="ql"][${index}]//label[@data-atid="qualified"]
   click element  xpath=//div[@data-block="ql"][${index}]//button[contains(@id, 'bt_ql_SendDecion')]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Завантажити документ у кваліфікацію
   [Arguments]  ${username}  ${filepath}  ${tender_uaid}  ${index}
@@ -1467,16 +1469,16 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   Run keyword if  '${procurement_method_type}' != 'closeFrameworkAgreementUA'  input text  xpath=//div[@data-block="ql"][${index}]//textarea[contains(@id, 'description')]  123
   click element  xpath=//div[@data-block="ql"][${index}]//button[contains(@id, 'bt_ql_SendDecion')]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Затвердити остаточне рішення кваліфікації
   [Arguments]   ${username}   ${tender_uaid}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   click element  id=btn_pre_qualification_stand_still
   ${suite_name}=  Convert To Lowercase  ${SUITE_NAME}
   Run Keyword If  not 'complaints' in '${suite_name}' and not '${procurement_method_type}' == 'closeFrameworkAgreementUA'  sleep  120
   Reload Page
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
   ${endDate}=  Get Text   id=tPosition_qualificationPeriod_endDate
   ${qualificationPeriod}=  Create Dictionary
@@ -1489,11 +1491,11 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   [Arguments]  ${username}   ${tender_uaid}  ${index}
   ${index}=  inc  ${index}
 #  uub.Пошук тендера по ідентифікатору    ${username}  ${tender_uaid}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Wait Until Page Contains Element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'bt_award_Cancel')]
   Click Element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'bt_award_Cancel')]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Завантажити документ рішення кваліфікаційної комісії
   [Arguments]  ${username}  ${filepath}  ${tender_uaid}  ${index}
@@ -1505,21 +1507,21 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   Click Element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'btn_documents_add')]
   Choose File  xpath=(//form[@id='upload_form']//input[@name='file'])  ${filepath}
   Reload Page
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Підтвердити постачальника
   [Arguments]  ${username}  ${tender_uaid}  ${index}
   ${index}=  inc  ${index}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Wait Until Page Contains Element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'bt_award_public')]
   click element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'bt_award_public')]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Дискваліфікувати постачальника
   [Arguments]  ${username}  ${tender_uaid}  ${index}
   ${index}=  inc  ${index}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Wait Until Page Contains Element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'bt_award_public')]
 
   click element  xpath=//div[@data-block="award"][${index}]//label[contains(@for, "decision_reject")]
@@ -1531,23 +1533,23 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   sleep  1
   click element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'bt_award_public')]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Затвердити постачальників
   [Arguments]  ${username}  ${tender_uaid}
   Reload Page
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Wait Until Page Contains Element  id=btn_qualification_stand_still
   click element  id=btn_qualification_stand_still
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Скасувати кваліфікацію
   [Arguments]   ${username}   ${tender_uaid}    ${index}
   ${index}=  inc  ${index}
   click element  xpath=//div[@data-block="award"][${index}]//button[contains(@id, 'bt_award_Cancel')]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 	
 ################################## Договір ################################
 
@@ -1562,7 +1564,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   ${is_edit}=  Run Keyword And Return Status    Element Should Not Be Visible    xpath=(//div[@id="pnAwardList"]//input[contains(@id, 'contractNumber')])[last()]
   Run Keyword If  ${is_edit}  Run keywords
   ...  Reload Page
-  ...  AND  Wait Until Element Contains  id=page_shown  Y  10
+  ...  AND  Wait Until Element Contains  id=page_shown  Y  30
 
   ${contractNumber}=  Get Value   xpath=(//div[@id="pnAwardList"]//input[contains(@id, 'contractNumber')])[last()]
   Run Keyword If  '${contractNumber}' == ''  Встановити початкові дані договору  ${index}
@@ -1602,7 +1604,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   Input text  xpath=(//div[@id="pnAwardList"]//input[@data-atid="endDate"])[last()]  ${str}
   Click Element  xpath=(//div[@id="pnAwardList"]//button[contains(@id, 'bt_contract_save')])[last()]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Завантажити документ в угоду
   [Arguments]    ${username}  ${file_path}  ${tender_uaid}  ${contract_index}
@@ -1614,14 +1616,14 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
     Wait Until Keyword Succeeds     15x      50          Run Keywords
     ...   Sleep  2
     ...   AND     Reload Page
-    ...   AND     Wait Until Element Contains  id=page_shown  Y  10
+    ...   AND     Wait Until Element Contains  id=page_shown  Y  30
     ...   AND     Wait Until Element Is Not Visible  id=pn_complaintPeriod
 
 Підтвердити підписання контракту
   [Arguments]    ${username}   ${tender_uaid}   ${contract_num}
   Click Element  xpath=(//div[@id="pnAwardList"]//button[contains(@id, 'bt_contract_save')])[last()]
   Sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   Click Element  xpath=(//div[@id="pnAwardList"]//button[contains(@id, 'bt_contract_register')])[last()]
 
 ################################## Рамкові угоди ################################
@@ -1695,7 +1697,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   Wait Until Page Contains Element  xpath=//a[contains(@id, "title")]
   Sleep  1
   Click Element  xpath=//a[contains(@id, "title")]
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   
   Run Keyword If  ${need_save_agreement}  Перший пошук угоди  ${username}
 
@@ -1703,13 +1705,14 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   [Arguments]  ${username}
   Set Variable  ${need_save_agreement}  ${False}
 
-  ${data}=  Get text  id=tender_data
+  ${data}=  Get text  id=agreement_data
 
   ${data}=  json_load  ${data}
   ${data}=  munch_dict  arg=${data}
   ${data}=  Create Dictionary  data=${data}
   
   Set To Dictionary  ${USERS.users['${username}']}  agreement_data=${data}
+  log  ${USERS.users['${username}'].agreement_data}  
  
 Отримати інформацію із угоди
   [Arguments]  ${username}  ${agreement_uaid}  ${field_name}
@@ -1718,7 +1721,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   [Return]  ${return_value}
 
 Отримати інформацію по id про changes[${index}].${fieldname}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   ${index}=  inc  ${index}
 
   ${return_value}=  Run Keyword If  'modifications' in '${fieldname}'  Отримати інформацію по id про ${index} ${fieldname}  
@@ -1730,8 +1733,9 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   [Return]  ${return_value}
 
 Отримати інформацію по id про ${index_change} modifications[${index}].${fieldname}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   ${index}=  inc  ${index}
+  Wait Until Element Is Visible  xpath=//div[@data-block="agreement_change"][${index_change}]//div[@data-block="modification"][${index}]//*[@data-atid="${fieldname}" and not(contains(@style,'display: none'))]
   ${return_value}=  Get text  xpath=//div[@data-block="agreement_change"][${index_change}]//div[@data-block="modification"][${index}]//*[@data-atid="${fieldname}" and not(contains(@style,'display: none'))]
   [Return]  ${return_value}
 
@@ -1757,7 +1761,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
 
   Click Element  xpath=//div[@data-block="agreement_change"][last()]//button[contains(@id, 'bt_agreement_change_pending_save_loc-change')]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Оновити властивості угоди
   [Arguments]  ${username}  ${agreement_uaid}  ${change_data}
@@ -1802,7 +1806,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
 
   Click Element  xpath=//div[@data-block="agreement_change"][last()]//button[contains(@id, 'bt_agreement_change_pending_save_')]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Завантажити документ для зміни у рамковій угоді
   [Arguments]  ${username}  ${filepath}  ${agreement_uaid}  ${item_id}
@@ -1818,7 +1822,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   Run Keyword If  '${status}' == 'active'  Click Element  xpath=//div[@data-block="agreement_change"][last()]//button[contains(@id, 'bt_agreement_change_public_')]
   Run Keyword If  '${status}' == 'cancelled'  Click Element  xpath=//div[@data-block="agreement_change"][last()]//button[contains(@id, 'bt_agreement_change_сancel_')]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   
   
 ################################## competitiveDialogue #######################
@@ -1833,7 +1837,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
     sleep  3
     click element   id=btn_active_stage2_waiting
     sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Отримати тендер другого етапу та зберегти його
   [Arguments]    ${username}   ${tender_uaid}
@@ -1849,7 +1853,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   input text  id=ePosition_tenderPeriod_endDate_Time  ${str_HM}
   click element  id=btnPublic
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
   ${criterias}=  Get text  id=criteria_contennt
   ${criterias}=  json_load  ${criterias}
@@ -1864,18 +1868,18 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
 Перейти до сторінки скасувань
   Wait Until Page Contains Element  id=cancels_ref 
   Click Element  id=cancels_ref
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
 Створити скасування
   [Arguments]  ${username}  ${tender_uaid}  ${cancellation_reason}  ${cancellation_reasonType}  ${doc_path}  ${description}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   
   Wait Until Element Is Visible  xpath=//button[contains(@id, 'btDraft_')]
   Select From List By Value  xpath=//div[@id="pnList"]//div[@data-block="cancellation"][last()]//select[contains(@id, '_reasonType')]  ${cancellation_reasonType}
   Input text  xpath=//div[@id="pnList"]//div[@data-block="cancellation"][last()]//textarea[contains(@id, '_reason')]  ${cancellation_reason}
   Click Element  xpath=//div[@id="pnList"]//div[@data-block="cancellation"][last()]//button[contains(@id, 'btDraft_')]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
 
   Wait Until Element Is Visible  xpath=//div[@id="pnList"]//div[@data-block="cancellation"][last()]//button[contains(@id, "btn_documents_add")]
 
@@ -1888,7 +1892,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   Wait Until Element Is Visible  xpath=//div[@id="pnList"]//div[@data-block="cancellation"][last()]//button[contains(@id, 'btActivate_')]
   Click Element  xpath=//div[@id="pnList"]//div[@data-block="cancellation"][last()]//button[contains(@id, 'btActivate_')]
   sleep  10
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   
   ${cancellation_data}=  Get text  xpath=//div[@id="pnList"]//div[@data-block="cancellation"][last()]//*[@data-atid="content"]
   ${cancellation_data}=  json_load  ${cancellation_data}
@@ -1919,13 +1923,13 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
 
 Отримати інформацію із документа
   [Arguments]  ${username}  ${tender_uaid}  ${doc_id}  ${field}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   ${return_value}=  Get Text   xpath=//div[@data-block-id="${doc_id}"]//*[@data-atid='${field}']
   [Return]  ${return_value}
 
 Отримати документ
   [Arguments]  ${username}  ${tender_uaid}  ${doc_id}
-  Wait Until Element Contains  id=page_shown  Y  10
+  Wait Until Element Contains  id=page_shown  Y  30
   ${file_name}=   Get Text   xpath=//div[@data-block-id="${doc_id}"]//a[@data-atid='title']
   ${url}=   Get Element Attribute    xpath=//div[@data-block-id="${doc_id}"]//a[@data-atid='title']@href
   download_file   ${url}  ${file_name.split('/')[-1]}  ${OUTPUT_DIR}
@@ -1972,7 +1976,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
 Отримати інформацію із предмету
   [Arguments]  ${username}  ${tender_uaid}  ${item_id}  ${fieldname}
   ${present}=  Run Keyword And Return Status  Element Should Not Be Visible  id=position_ref
-  Run Keyword if  ${present}  Wait Until Element Contains  id=page_shown  Y  10
+  Run Keyword if  ${present}  Wait Until Element Contains  id=page_shown  Y  30
 
   ${return_value}=   Get text  xpath=//div[starts-with(@id, 'pn_w_item') and contains(@class, '${item_id}')]//*[@data-atid="${fieldname}" and not(contains(@style,'display: none'))]
 
@@ -1984,7 +1988,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
 Отримати інформацію із нецінового показника
   [Arguments]   ${username}   ${tender_uaid}   ${feature_id}   ${fieldname}
   ${present}=  Run Keyword And Return Status  Element Should Not Be Visible  id=position_ref
-  Run Keyword if  ${present}  Wait Until Element Contains  id=page_shown  Y  10
+  Run Keyword if  ${present}  Wait Until Element Contains  id=page_shown  Y  30
   
   ${return_value}=  Отримати інформацію з елементу за шляхом //div[@data-block-id="${feature_id}"]//*[@data-atid="${fieldname}"]
   [return]  ${return_value}
@@ -1992,7 +1996,7 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
 Отримати інформацію із лоту
   [Arguments]   ${username}   ${tender_uaid}   ${lot_id}   ${fieldname}
   ${present}=  Run Keyword And Return Status  Element Should Not Be Visible  id=position_ref
-  Run Keyword if  ${present}  Wait Until Element Contains  id=page_shown  Y  10
+  Run Keyword if  ${present}  Wait Until Element Contains  id=page_shown  Y  30
 
   ${return_value}=  Run Keyword If  'currency' in '${fieldname}'  Get Text   id=tPosition_value_currency
   ...  ELSE IF  'valueAddedTaxIncluded' in '${fieldname}'  is_checked  cbPosition_value_valueAddedTaxIncluded

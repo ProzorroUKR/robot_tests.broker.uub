@@ -986,7 +986,7 @@ Login
 
   Run Keyword If  '${fieldname}' == 'value.amount' and '${procurement_method_type}' == 'closeFrameworkAgreementUA'  input text  id=ePosition_value_amount  ${str}
   Run Keyword If  '${fieldname}' == 'value.amount' and '${procurement_method_type}' == 'closeFrameworkAgreementUA'  input text  id=ePosition_minimalStep_percent  ${1}
-  Run Keyword If  '${fieldname}' == 'minimalStep.amount' and '${procurement_method_type}' == 'closeFrameworkAgreementUA'  input text  id=ePosition_minimalStep_percent  ${str}
+  Run Keyword If  '${fieldname}' == 'minimalStep.amount' and '${procurement_method_type}' == 'closeFrameworkAgreementUA'  input text  id=ePosition_minimalStep_amount  ${str}
   Run Keyword If  '${fieldname}' == 'value.amount' and '${procurement_method_type}' != 'closeFrameworkAgreementUA'  input text  xpath=(//div[@data-block-id='${lot_id}'])//input[contains(@id, 'value_amount')]  ${str}
   Run Keyword If  '${fieldname}' == 'value.amount' and '${procurement_method_type}' != 'closeFrameworkAgreementUA'  input text  xpath=(//div[@data-block-id='${lot_id}'])//input[contains(@id, 'minimalStep_percent')]  ${1}
   Run Keyword If  '${fieldname}' == 'minimalStep.amount' and '${procurement_method_type}' != 'closeFrameworkAgreementUA'  input text  xpath=(//div[@data-block-id='${lot_id}'])//input[contains(@id, 'minimalStep_amount')]  ${str}

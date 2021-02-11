@@ -908,7 +908,7 @@ Login
   ${present}=  Run Keyword And Return Status  Element Should Not Be Visible  id=position_ref
   Run Keyword If  ${present}  Перейти до сторінки скасувань
   ${index}=  inc  ${index}
-  ${return_value}=  Get text  xpath=(//div[@data-block="question"])[${index}]//*[@data-atid="${fieldname}" and not(contains(@style,'display: none'))]
+  ${return_value}=  Get text  xpath=(//div[@data-block="cancellation"])[${index}]//*[@data-atid="${fieldname}" and not(contains(@style,'display: none'))]
   [return]  ${return_value}
 
 Отримати contracts.status
@@ -1786,39 +1786,30 @@ rem  Run Keyword If  '${procurement_method_type}' != 'belowThreshold'  Wait Unti
   ${rationaleType}=    Get text  xpath=//div[@data-block="agreement_change"][last()]//span[@data-atid="rationaleType" and not(contains(@style,'display: none'))]
   
   ${modification}=  Set variable  ${change_data.data.modifications[0]}
-  ${has_contractId}=  Run Keyword And Return Status  Dictionary Should Contain Key  ${modification}  contractId
-
-  ${select_name}=  Set Variable If  ${has_contractId}  contractId  itemId
-  ${select_value}=  Get From Dictionary  ${modification}  ${select_name}
-
+  
   ${has_addend}=  Run Keyword And Return Status  Dictionary Should Contain Key  ${modification}  addend
   ${has_factor}=  Run Keyword And Return Status  Dictionary Should Contain Key  ${modification}  factor
   ${field_name}=  Set Variable If  ${has_addend}  addend  
   ...  ${has_factor}  factor
   ...  contractId
-  
-  ${field_value}=  Get From Dictionary  ${modification}  ${field_name}
 
-  Run Keyword And Return If  '${field_name}' in ['contractId', 'itemId']  Select From List By Value  xpath=//div[@data-block="agreement_change"][last()]//select[contains(@id, '_${select_name}')]  ${field_value}
+  ${has_contractId}=  Run Keyword And Return Status  Dictionary Should Contain Key  ${modification}  contractId
+  Run Keyword If  ${has_contractId} 
+  ...  Select From List By Value  xpath=//div[contains(@id,'pn_agreement_changes_place')]//div[@data-block="agreement_change"][last()]//select[contains(@id, '_contractId')]  ${modification.contractId}
+  Select From List By Value  xpath=//div[contains(@id,'pn_agreement_changes_place')]//div[@data-block="agreement_change"][last()]//select[contains(@id, '_itemId')]    ${modification.itemId}
   
-  Run Keyword If  '${rationaleType}' == 'partyWithdrawal'  Select From List By Value  xpath=//div[@data-block="agreement_change"][last()]//select[contains(@id, '_itemId')]  ${change_data.data.modifications[0].itemId}
-
-  ${factor_percent}=  Run Keyword If  '${field_name}' == 'factor'  Evaluate  (${field_value}-1)*100
+  ${addend}=  Run Keyword If  ${has_addend}  Convert To String  ${modification.addend}
+  Run Keyword If  ${has_addend}  Run keywords
+  ...  Input Text  xpath=//div[contains(@id,'pn_agreement_changes_place')]//div[@data-block="agreement_change"][last()]//input[contains(@id, '_addend')]  ${addend}
+  ...  AND  Run Keyword If  '${rationaleType}' == 'taxRate'  clear element text  xpath=//div[contains(@id,'pn_agreement_changes_place')]//div[@data-block="agreement_change"][last()]//input[contains(@id, '_factor')]
+  
+  ${factor_percent}=  Run Keyword If  ${has_factor}  Evaluate  (${modification.factor}-1)*100
   ${factor_percent}=  Convert To String  ${factor_percent}
-
-  ${field_value}=  Run Keyword If  '${field_name}' == 'addend'  Convert To String  ${field_value}
+  Run Keyword If  ${has_factor}  Run keywords
+  ...  Input Text  xpath=//div[contains(@id,'pn_agreement_changes_place')]//div[@data-block="agreement_change"][last()]//input[contains(@id, '_factor')]  ${factor_percent}
+  ...  AND  Run Keyword If  '${rationaleType}' == 'taxRate'  clear element text  xpath=//div[contains(@id,'pn_agreement_changes_place')]//div[@data-block="agreement_change"][last()]//input[contains(@id, '_addend')]
   
-  Run Keyword If  '${field_name}' == 'addend' and ('taxRate' in '${TEST_NAME}' or 'itemPriceVariation' in '${TEST_NAME}')
-    ...  Run keywords
-    ...  Input Text  xpath=//div[@data-block="agreement_change"][last()]//input[contains(@id, '_addend')]  ${field_value}
-	...  AND  Run Keyword If  '${rationaleType}' == 'taxRate'  clear element text  xpath=//div[@data-block="agreement_change"][last()]//input[contains(@id, '_factor')]
-	
-  Run Keyword If  '${field_name}' == 'factor' and ('thirdParty' in '${TEST_NAME}' or 'itemPriceVariation' in '${TEST_NAME}')
-    ...  Run keywords
-    ...  Input Text  xpath=//div[@data-block="agreement_change"][last()]//input[contains(@id, '_factor')]  ${factor_percent}
-    ...  AND  Run Keyword If  '${rationaleType}' == 'taxRate'  clear element text  xpath=//div[@data-block="agreement_change"][last()]//input[contains(@id, '_addend')]
-
-  Click Element  xpath=//div[@data-block="agreement_change"][last()]//button[contains(@id, 'bt_agreement_change_pending_save_')]
+  Click Element  xpath=//div[contains(@id,'pn_agreement_changes_place')]//div[@data-block="agreement_change"][last()]//button[contains(@id, 'bt_agreement_change_pending_save_')]
   sleep  10
   Wait Until Element Contains  id=page_shown  Y  30
 
